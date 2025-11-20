@@ -66,12 +66,65 @@ To write a program for Frequency Modulation and Demodulation using SCILAB and to
 <img width="512" height="365" alt="image" src="https://github.com/user-attachments/assets/dfe6bc64-2b6f-4afa-ae79-95391859ab04" />
 
 ## PROGRAM
+```
+clc; clear; close;
+function p = pdf(t)
+    p = 3 .* (1 - t).^2;
+endfunction
+function y = integrand_mean(t)
+    y = t .* pdf(t);
+endfunction
+function y = integrand_x2(t)
+    y = t.^2 .* pdf(t);
+endfunction
+a = 0; b = 1;
+EX  = intg(a, b, integrand_mean);
+EX2 = intg(a, b, integrand_x2);
+vX  = EX2 - EX^2;
+EY  = intg(a, b, integrand_mean);
+EY2 = intg(a, b, integrand_x2);
+vY  = EY2 - EY^2;
+mprintf("Mean of X   = %g\n", EX);
+mprintf("Var(X)      = %g\n\n", vX);
+mprintf("Mean of Y   = %g\n", EY);
+mprintf("Var(Y)      = %g\n\n", vY);
+function r = crosscorr_seq(x, y)
+    nx = length(x);
+    ny = length(y);
+    lags = -(ny-1):(nx-1);
+    r = zeros(1, nx + ny - 1);
+    idx = 1;
+    for lag = lags
+        s = 0;
+        for n = 1:nx
+            m = n - lag;
+            if m >= 1 & m <= ny then
+                s = s + x(n) * y(m);
+            end
+        end
+        r(idx) = s;
+        idx = idx + 1;
+    end
+endfunction
+x = input("Enter reference sequence (e.g. [1 2 3 4]): ");
+y = input("Enter second sequence    (e.g. [2 3 4 5]): ");
+x = x(:)'; y = y(:)';
+r = crosscorr_seq(x, y);
+lags = -(length(y)-1):(length(x)-1);
+scf(1);
+plot2d3(lags, r);
+xtitle("Cross-correlation (stem plot)","Lag","r_{xy}(lag)");
+```
 
 ## TABULATION
 
 ## CALCULATION
+![ac 4](https://github.com/user-attachments/assets/d9a17bbe-d8bf-400e-a2bd-1bc740fed045)
 
 ## OUTPUT
+![ac 4](https://github.com/user-attachments/assets/11f5b1c7-3a8e-4883-84ef-ca55b8d0fcdf)
+![4 out](https://github.com/user-attachments/assets/3568c54e-4cbb-422f-b836-702c8b042ac5)
 
 ## RESULT
+Thus the mean , variance and cross correlation are executed in Scilab and output is verified.
 
